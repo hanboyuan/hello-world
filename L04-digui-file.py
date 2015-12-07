@@ -7,10 +7,9 @@ def scandir(target):
                 if os.path.isfile(obj):
                         if target in obj:
                                 print obj,
-                        else:
-                                pass
-                if os.path.isdir(obj):
+                else:
                         os.chdir(obj)
                         scandir(target)
                         os.chdir(os.pardir)
+##############################################
 scandir('txt')
