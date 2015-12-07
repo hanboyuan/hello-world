@@ -11,6 +11,6 @@ def scandir(target):
                                 pass
                 if os.path.isdir(obj):
                         os.chdir(obj)
-                        scandir('txt')
+                        scandir(target)
                         os.chdir(os.pardir)
 scandir('txt')
