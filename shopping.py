@@ -96,7 +96,7 @@ class Account(object):
 
 
 '''
-    测试程序运行情况，加减商品，通过购物车生成交易页，account传递进去现金
+    测试程序运行情况，加减商品，通过购物车生成交易页，account传递进去现金20000
     如果现金大于订单总金额消费成功，交易页写入消费信息
     如果现金小于订单总金额，消费失败，只输出，不写入交易页面
 '''
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     shop_result = a.get_shoplist()
     b = Account()
     b.check(shop_result)
-    cost = b.account(10000)
+    cost = b.account(20000)
     if cost:
         f = file('check_list', 'a')
         f.write('-' * 50)
