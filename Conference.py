@@ -27,10 +27,7 @@ class Conference(object):
         self.db = create_engine(conference_url)
         self.db.echo = False  # 如果此处设置为True的话，就会把创建数据库的sql语句显示回来
         self.meta = MetaData(self.db)
-        self.conferences_table = Table('conferences', self.meta, autoload=True)
-        Mapper(conference, self.conferences_table)
-        self.Session = sessionmaker(bind=self.db)
-        self.session = self.Session()
+
 
     def __str__(self):
         return "%s" % (self.__class__.__name__)
@@ -39,15 +36,19 @@ class Conference(object):
 
     def publish(self, conference_item, conference_date, conference_person_num):
         try:
-            tmp = self.session.query(conference).filter(conference.conference_item == conference_item)
+            conferences_table = Table('conferences', self.meta, autoload=True)
+            Mapper(conference, conferences_table)
+            Session = sessionmaker(bind=self.db)
+            session = Session()
+            tmp = session.query(conference).filter(conference.conference_item == conference_item)
             if tmp.first():
                 return False
             else:
                 conference_tmp = conference(conference_item=conference_item, conference_date=conference_date,
                                             conference_person_num=conference_person_num,
-                                            conference_added_person='%s'%self.name)
-                self.session.add(conference_tmp)
-                self.session.commit()
+                                            conference_added_person='%s' % self.name)
+                session.add(conference_tmp)
+                session.commit()
                 return True
 
 
@@ -56,16 +57,20 @@ class Conference(object):
 
     def add_conference(self, conference_item):
         try:
-            tmp = self.session.query(conference).filter(conference.conference_item == conference_item)
+            conferences_table = Table('conferences', self.meta, autoload=True)
+            Mapper(conference, conferences_table)
+            Session = sessionmaker(bind=self.db)
+            session = Session()
+            tmp = session.query(conference).filter(conference.conference_item == conference_item)
             result = tmp.first()
             if result:
                 current_add = result.conference_added_person.split()
                 if self.name not in current_add:
                     current_add.append(self.name)
                     current_add_str = " ".join(current_add)
-                    self.session.query(conference).filter(conference.conference_item == conference_item).update(
+                    session.query(conference).filter(conference.conference_item == conference_item).update(
                             {'conference_added_person': current_add_str})
-                    self.session.commit()
+                    session.commit()
                     return True
                 else:
                     return False
@@ -78,13 +83,17 @@ class Conference(object):
 
 if __name__ == "__main__":
     '''
-        实现两个实例a和b，指定初始用户名
+
     '''
     a = Conference('xiaobai1')
     b = Conference('xiaobai2')
+    c = Conference('xiaobai3')
 
     # print a.publish('Python核心编程', '2016-3-9 16:00', 30)
-    print a.publish('Python-flask', '2016-3-10 16:00', 30)
-    # print a.add_conference('Python-flask')
-    print b.add_conference('Python-flask')
-  
+    print a.publish('Python-flask2', '2016-3-10 16:00', 30)
+    # # print a.add_conference('Python-flask')
+    # print b.add_conference('Python-flask')
+    # print b.add_conference('Python核心编程')
+    #print c.publish('Python-flask2', '2016-3-10 16:00', 30)
+    print c.add_conference('Python-flask2')
+
