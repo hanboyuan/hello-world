@@ -71,7 +71,7 @@ class Conference(object):
                     session.query(conference).filter(conference.conference_item == conference_item).update(
                             {'conference_added_person': current_add_str})
                     session.commit()
-                    return True
+                    return True,current_add_str
                 else:
                     return False
             else:
